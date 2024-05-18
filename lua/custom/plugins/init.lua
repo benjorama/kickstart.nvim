@@ -7,13 +7,30 @@ return {
     'davidgranstrom/scnvim',
     config = function()
       local scnvim = require 'scnvim'
+      local map = scnvim.map
+      local map_expr = scnvim.map_expr
       scnvim.setup {
         ensure_installed = true,
         sclang = {
           cmd = nil,
           args = {},
         },
-        keymaps = {},
+        keymaps = {
+          ['<M-e>'] = map('editor.send_line', { 'i', 'n' }),
+          ['<C-e>'] = {
+            map('editor.send_block', { 'i', 'n' }),
+            map('editor.send_selection', 'x'),
+          },
+          ['<CR>'] = map 'postwin.toggle',
+          ['<M-CR>'] = map('postwin.toggle', 'i'),
+          ['<M-L>'] = map('postwin.clear', { 'n', 'i' }),
+          ['<C-k>'] = map('signature.show', { 'n', 'i' }),
+          ['<F12>'] = map('sclang.hard_stop', { 'n', 'x', 'i' }),
+          ['<leader>st'] = map 'sclang.start',
+          ['<leader>sk'] = map 'sclang.recompile',
+          ['<F1>'] = map_expr 's.boot',
+          ['<F2>'] = map_expr 's.meter',
+        },
         documentation = {
           cmd = nil,
           horizontal = true,
@@ -24,7 +41,7 @@ return {
           highlight = true,
           auto_toggle_error = true,
           scrollback = 5000,
-          horizontal = false,
+          horizontal = true,
           direction = 'right',
           size = nil,
           fixed_size = nil,
@@ -78,5 +95,12 @@ return {
       }
       require('luasnip').add_snippets('supercollider', require('scnvim/utils').get_snippets())
     end,
+  },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
   },
 }
